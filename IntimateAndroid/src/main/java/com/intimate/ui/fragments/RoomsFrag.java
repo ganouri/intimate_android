@@ -20,6 +20,7 @@ import org.json.JSONObject;
 /** Created by yurii_laguta on 20/07/13. */
 public class RoomsFrag extends Fragment {
 
+    public static final String TAG =  RoomsFrag.class.getSimpleName();
     private JSONArray mDataSource;
     private ListView mListView;
     private RoomsAdapter mAdapter;
