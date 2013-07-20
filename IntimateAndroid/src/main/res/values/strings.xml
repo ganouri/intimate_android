@@ -11,5 +11,112 @@
     <string name="by_clicking_on_create_account">By clicking on \"Create account\"\nyou accepted our
         <a href="http://www.google.com">Term and conditions</a>
     </string>
+    <string name="data_source">{ \"id\": 1, \"jsonrpc\": \"2.0\", \"total\": 6, \"result\": [ {
+        \"id\": 0, \"guid\": \"bc9437af-ae97-472d-b2b3-1d15ab448aae\", \"isActive\": true,
+        \"picture\": \"http://placehold.it/32x32\", \"age\": 28, \"name\": \"Imelda Barrera\",
+        \"gender\": \"female\", \"company\": \"Pyramax\", \"about\": \"Id do in ipsum est ex
+        occaecat consectetur nostrud. Mollit amet magna laboris consequat dolor enim sunt culpa sunt
+        laboris est quis. Quis amet culpa labore qui quis.\r\n\" }, { \"id\": 1, \"guid\":
+        \"a7be78ee-30d7-4494-9925-9b88624165d7\", \"isActive\": false, \"picture\":
+        \"http://placehold.it/32x32\", \"age\": 38, \"name\": \"Laurel Nunez\", \"gender\":
+        \"female\", \"company\": \"Enquility\", \"about\": \"Dolore nisi est occaecat occaecat ex.
+        Magna commodo voluptate do minim sit aliqua eu sit id voluptate tempor. Aliqua occaecat
+        aliqua duis minim sint culpa pariatur minim. Elit et magna do dolor do reprehenderit fugiat
+        dolor occaecat commodo aliquip. Voluptate nulla minim cupidatat nostrud reprehenderit sunt
+        ex dolore deserunt. Voluptate commodo esse nostrud ad. Cupidatat incididunt aliqua cillum
+        exercitation nostrud pariatur.\r\n\" }, { \"id\": 2, \"guid\":
+        \"c6de8b63-38a8-4238-a061-0ce884304c4b\", \"isActive\": false, \"picture\":
+        \"http://placehold.it/32x32\", \"age\": 36, \"name\": \"Dodson Snow\", \"gender\": \"male\",
+        \"company\": \"Sequitur\", \"about\": \"Id voluptate velit occaecat fugiat sit ut sunt culpa
+        quis proident proident deserunt nostrud culpa. Minim est ad nulla eu reprehenderit Lorem
+        duis. Nulla Lorem voluptate ut consectetur incididunt eiusmod exercitation ea. Amet id
+        occaecat cillum ex cupidatat. Dolore velit magna labore et cupidatat incididunt non minim
+        tempor.\r\n\" }, { \"id\": 3, \"guid\": \"15728e2f-7ab7-4962-ae78-8f871c70b447\",
+        \"isActive\": true, \"picture\": \"http://placehold.it/32x32\", \"age\": 26, \"name\":
+        \"Oliver Garcia\", \"gender\": \"male\", \"company\": \"Zerology\", \"about\": \"Duis ea
+        eiusmod ipsum anim officia sunt deserunt. Laborum pariatur id adipisicing dolor pariatur
+        consequat labore voluptate aliquip dolor incididunt nostrud ullamco. Anim proident
+        adipisicing Lorem proident cillum veniam culpa ex in dolor. Nulla laborum mollit elit
+        officia laborum incididunt magna ut duis ipsum consequat eu et proident. Laboris nulla ut
+        dolor reprehenderit sit fugiat ipsum in consectetur dolore. Excepteur sint ad minim veniam
+        magna ea ipsum.\r\n\" }, { \"id\": 4, \"guid\": \"669ea7fa-7ab6-4574-8bdb-862d96f54d84\",
+        \"isActive\": true, \"picture\": \"http://placehold.it/32x32\", \"age\": 32, \"name\":
+        \"Hollie Solomon\", \"gender\": \"female\", \"company\": \"Letpro\", \"about\": \"Anim est
+        sit sunt velit sint. Duis nostrud aute excepteur voluptate id enim occaecat. Anim
+        reprehenderit ipsum labore enim.\r\n\" }, { \"id\": 5, \"guid\":
+        \"cb22db6e-ec0f-433e-ab79-22c7ef6f65f5\", \"isActive\": true, \"picture\":
+        \"http://placehold.it/32x32\", \"age\": 27, \"name\": \"Santos Burns\", \"gender\":
+        \"male\", \"company\": \"Anacho\", \"about\": \"Exercitation voluptate commodo Lorem magna
+        qui id pariatur sit nulla nulla. Consequat amet sunt qui in quis tempor exercitation laborum
+        anim in. Proident duis ad commodo et sit laboris eiusmod consequat aliquip ex enim quis.
+        Veniam ad velit Lorem aliqua dolor consectetur ad cupidatat ullamco adipisicing. Et nulla
+        proident aliquip do ipsum.\r\n\" } ] }
+    </string>
+    <string name="my_room_data">[ { \"id\": 0, \"guid\": \"64c9c46c-eff5-4e00-b9e2-3605c09a3432\",
+        \"picture\": \"http://placehold.it/32x32\", \"age\": 37, \"name\": \"Pennington Phillips\",
+        \"gender\": \"male\", \"about\": \"Minim Lorem duis cupidatat ipsum fugiat cillum velit
+        mollit labore officia aute aliquip ad proident. Quis duis in incididunt id voluptate ut
+        nostrud deserunt. Irure duis duis commodo labore dolor commodo laborum eiusmod duis.
+        Adipisicing non adipisicing sit officia officia esse eiusmod.\r\n\" }, { \"id\": 1,
+        \"guid\": \"5c23eb17-9c11-4ea7-b5c3-654284cdc8cc\", \"picture\":
+        \"http://placehold.it/32x32\", \"age\": 33, \"name\": \"Traci Hahn\", \"gender\":
+        \"female\", \"about\": \"Labore fugiat proident do ut pariatur ex sint nulla irure esse amet
+        ipsum. Proident anim veniam cupidatat proident elit enim minim non. Ullamco consectetur
+        pariatur ad ut mollit ipsum veniam. Ad non excepteur pariatur eiusmod sunt. Reprehenderit
+        amet ullamco commodo proident qui ullamco tempor tempor commodo ut.\r\n\" }, { \"id\": 2,
+        \"guid\": \"112232af-7f9a-4bf6-9a69-6c28930772c6\", \"picture\":
+        \"http://placehold.it/32x32\", \"age\": 25, \"name\": \"Keisha Perkins\", \"gender\":
+        \"female\", \"about\": \"Cillum elit excepteur laboris ea ullamco dolore consequat occaecat
+        anim incididunt sunt ex. Labore quis officia nisi magna commodo labore. Eiusmod dolore amet
+        deserunt ullamco. In amet duis labore ut quis est excepteur anim nostrud.\r\n\" }, { \"id\":
+        3, \"guid\": \"c882598c-a314-48ef-a384-70d16121169d\", \"picture\":
+        \"http://placehold.it/32x32\", \"age\": 39, \"name\": \"Natalie Rowland\", \"gender\":
+        \"female\", \"about\": \"Sit excepteur incididunt laborum sint velit commodo deserunt
+        reprehenderit tempor duis nulla magna qui tempor. Aliquip officia enim minim esse dolor
+        irure voluptate quis tempor quis sit adipisicing adipisicing deserunt. Quis do aliquip sunt
+        laboris culpa nulla ut.\r\n\" }, { \"id\": 4, \"guid\":
+        \"b2417785-d80e-4af1-aad1-536424c268d8\", \"picture\": \"http://placehold.it/32x32\",
+        \"age\": 33, \"name\": \"Faulkner Barr\", \"gender\": \"male\", \"about\": \"Et consectetur
+        occaecat fugiat laborum anim labore ut nulla veniam non deserunt duis deserunt. Proident
+        adipisicing eiusmod ut eiusmod nulla. Eiusmod cillum non duis consectetur tempor ea cillum
+        duis minim occaecat sunt. In ullamco nisi nisi dolore eiusmod sunt ex consectetur
+        consectetur nostrud ad nostrud esse dolore.\r\n\" }, { \"id\": 5, \"guid\":
+        \"e68f7dcd-091e-4d3b-899a-5ccf8585d302\", \"picture\": \"http://placehold.it/32x32\",
+        \"age\": 36, \"name\": \"Parrish Beach\", \"gender\": \"male\", \"about\": \"Officia nulla
+        cillum exercitation dolor adipisicing eu est. Ad veniam laborum est sunt consequat enim
+        cupidatat eiusmod Lorem nostrud eu nisi est. Excepteur nisi sit excepteur ut. Deserunt sint
+        mollit eiusmod do. Commodo culpa officia magna veniam velit. Nisi pariatur dolore cupidatat
+        adipisicing culpa id labore dolor pariatur commodo.\r\n\" }, { \"id\": 6, \"guid\":
+        \"a9839b73-66f6-4c07-87d9-0961eba30c1b\", \"picture\": \"http://placehold.it/32x32\",
+        \"age\": 27, \"name\": \"Carey Gallagher\", \"gender\": \"male\", \"about\": \"Veniam quis
+        ipsum mollit consectetur magna sunt reprehenderit exercitation. Voluptate ad Lorem dolore ex
+        ut. Id sit Lorem mollit irure reprehenderit proident laborum consectetur velit tempor. Elit
+        consectetur elit culpa eiusmod laborum esse ad nostrud laborum deserunt dolor anim laboris
+        eu.\r\n\" }, { \"id\": 7, \"guid\": \"08916d33-0bd7-45ad-becf-99e7ae112042\", \"picture\":
+        \"http://placehold.it/32x32\", \"age\": 26, \"name\": \"Bertha Matthews\", \"gender\":
+        \"female\", \"about\": \"Proident cupidatat nulla consectetur officia nisi pariatur do.
+        Laborum reprehenderit ex mollit esse aliqua consequat ex nulla est tempor dolore. Ea magna
+        consectetur velit id esse sunt consectetur culpa nisi.\r\n\" }, { \"id\": 8, \"guid\":
+        \"6d67639c-828f-49b6-b5c9-113ac9663d66\", \"picture\": \"http://placehold.it/32x32\",
+        \"age\": 20, \"name\": \"Rose Brady\", \"gender\": \"male\", \"about\": \"Ut nulla consequat
+        ut minim ex consequat consectetur eiusmod aliquip duis ullamco adipisicing sit aliqua.
+        Labore reprehenderit ea elit consectetur fugiat. Velit esse culpa dolore velit cupidatat
+        cupidatat nulla irure incididunt cupidatat dolor exercitation fugiat est. Aliquip est
+        laboris adipisicing incididunt laborum ipsum commodo tempor quis eiusmod occaecat aute.
+        Laborum anim voluptate qui qui aliqua duis ad eiusmod esse.\r\n\" }, { \"id\": 9, \"guid\":
+        \"6998a26f-dea9-4bff-a570-d9b872a60ad8\", \"picture\": \"http://placehold.it/32x32\",
+        \"age\": 21, \"name\": \"Christine Manning\", \"gender\": \"female\", \"about\": \"Aliquip
+        magna est duis officia ut culpa sunt in consectetur. Pariatur qui mollit non elit qui
+        eiusmod. Sunt sit sunt ea amet reprehenderit fugiat consequat anim ea aliqua adipisicing non
+        commodo. Lorem ea exercitation quis sunt veniam reprehenderit enim do ex qui labore. Ipsum
+        officia magna in aliqua reprehenderit proident est reprehenderit nostrud magna tempor non.
+        Dolor cupidatat ut veniam ipsum duis labore et exercitation eiusmod duis amet. Incididunt
+        irure amet anim incididunt.\r\n\" }, { \"id\": 10, \"guid\":
+        \"cd7403a3-aa27-49b5-a4ab-1865ab6a1ecd\", \"picture\": \"http://placehold.it/32x32\",
+        \"age\": 30, \"name\": \"Chandra Mueller\", \"gender\": \"female\", \"about\": \"Amet
+        incididunt quis reprehenderit officia culpa ad esse irure minim ea adipisicing et
+        consectetur. Eiusmod eiusmod dolore enim do do cillum id eu sit minim cillum cillum aliqua
+        occaecat. Proident labore ut velit non eiusmod veniam dolore ut.\r\n\" } ]
+    </string>
 
 </resources>

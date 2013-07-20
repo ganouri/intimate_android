@@ -6,6 +6,8 @@ import android.view.Menu;
 
 import com.intimate.R;
 import com.intimate.ui.fragments.PassCheckFrag;
+import com.intimate.ui.fragments.RoomFrag;
+import com.intimate.ui.fragments.RoomsFrag;
 
 public class MainActivity extends FragmentActivity {
 
@@ -14,7 +16,7 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, PassCheckFrag.newInstance());
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, PassCheckFrag.newInstance()).commit();
 //        startActivity(new Intent(this, LoginActivity.class));
     }
 
@@ -25,5 +27,15 @@ public class MainActivity extends FragmentActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    
+
+    public void showRooms() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RoomsFrag.newInstance(null))
+        .commit();
+    }
+
+    public void onRoomSelected(long id) {
+        Bundle args = new Bundle(1);
+        args.putLong("_id", id);
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, RoomFrag.newInstance(args)).commit();
+    }
 }
