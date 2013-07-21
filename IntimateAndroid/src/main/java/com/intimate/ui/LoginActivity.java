@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -15,7 +16,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.EasyTracker;
+import com.intimate.NavigationController;
 import com.intimate.R;
+import com.intimate.utils.Prefs;
 
 /**
  * Activity which displays a login screen to the user, offering registration as
@@ -54,9 +58,15 @@ public class LoginActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        overridePendingTransition(0,0);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_login);
+
+        if(Prefs.isLogged()){
+            NavigationController.goToMainActivity(this);
+            finish();
+        }
 
         // Set up the login form.
         mEmail = getIntent().getStringExtra(EXTRA_EMAIL);
@@ -75,7 +85,8 @@ public class LoginActivity extends Activity {
             }
         });
 
-//        mTermAndConditionTV = (TextView) findViewById(R.id.tv_terms_and_conditions);
+        TextView mTermAndConditionTV = (TextView) findViewById(R.id.tv_terms_and_conditions);
+        mTermAndConditionTV.setMovementMethod(LinkMovementMethod.getInstance());
 
         mLoginFormView = findViewById(R.id.login_form);
         mLoginStatusView = findViewById(R.id.login_status);
@@ -89,6 +100,17 @@ public class LoginActivity extends Activity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -228,6 +250,8 @@ public class LoginActivity extends Activity {
             showProgress(false);
 
             if (success) {
+                Prefs.setLogged(true);
+                NavigationController.goToMainActivity(LoginActivity.this);
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

@@ -57,7 +57,7 @@
                     android:id="@+id/tv_terms_and_conditions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:autoLink="web"
+
                     android:text="@string/by_clicking_on_create_account"/>
 
             <Button android:id="@+id/sign_in_button"
