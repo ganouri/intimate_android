@@ -8,8 +8,8 @@ import android.view.Menu;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.intimate.R;
 import com.intimate.model.Interaction;
+import com.intimate.ui.fragments.ContactsChooserFrag;
 import com.intimate.ui.fragments.InteractionImageFrag;
-import com.intimate.ui.fragments.PassCheckFrag;
 import com.intimate.ui.fragments.RoomFrag;
 import com.intimate.ui.fragments.RoomsFrag;
 
@@ -22,7 +22,8 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, PassCheckFrag.newInstance()).commit();
+//            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, PassCheckFrag.newInstance()).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, ContactsChooserFrag.newInstance(null)).commit();
         }
 //        startActivity(new Intent(this, LoginActivity.class));
     }
