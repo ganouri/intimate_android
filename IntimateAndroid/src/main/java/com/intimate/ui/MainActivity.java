@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.intimate.NavigationController;
 import com.intimate.R;
 import com.intimate.model.Interaction;
 import com.intimate.ui.fragments.InteractionImageFrag;
@@ -26,7 +28,14 @@ public class MainActivity extends FragmentActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, PassCheckFrag.newInstance()).commit();
 //            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, ContactsChooserFrag.newInstance(null)).commit();
         }
-//        startActivity(new Intent(this, LoginActivity.class));
+
+        findViewById(R.id.btn_create_interaction).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavigationController.createImageInteraction(MainActivity.this);
+            }
+        });
+
     }
 
 
