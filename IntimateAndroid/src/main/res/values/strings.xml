@@ -8,7 +8,7 @@
     <string name="toast_error_camera_preview">Error camera preview</string>
     <string name="content_description_take_picture">Take Picture content description</string>
     <string name="toast_error_save_picture">Error saving picture</string>
-    <string name="by_clicking_on_create_account">By clicking on \"Create account\" you accepted our
+    <string name="by_clicking_on_create_account">By clicking on \"Sign up\" you accepted our
         <a href="http://www.google.com">Term and conditions</a>
     </string>
     <string name="data_source">{ \"id\": 1, \"jsonrpc\": \"2.0\", \"total\": 6, \"result\": [ {
@@ -118,5 +118,10 @@
         consectetur. Eiusmod eiusmod dolore enim do do cillum id eu sit minim cillum cillum aliqua
         occaecat. Proident labore ut velit non eiusmod veniam dolore ut.\r\n\" } ]
     </string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="action_logout">Logout</string>
+    <string name="action_test">Action Test</string>
+    <string name="shoot">Shoot</string>
+    <string name="login">Login</string>
 
 </resources>

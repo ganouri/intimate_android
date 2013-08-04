@@ -37,4 +37,20 @@ public class Prefs {
     public static boolean isLogged(){
         return mPrefs.getBoolean("isLogged", false);
     }
+
+    public static void setLoginToken(String value) {
+        mEditor.putString("loginToken", value).apply();
+    }
+
+    public static String getLoginToken(){
+        return mPrefs.getString("loginToken", "");
+    }
+
+    public static void setEmail(String value) {
+        mEditor.putString("email", value).apply();
+    }
+
+    public static String getEmail(){
+        return mPrefs.getString("email", "");
+    }
 }

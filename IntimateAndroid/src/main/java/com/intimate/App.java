@@ -4,16 +4,22 @@ import android.app.Application;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.ExceptionReporter;
+import com.intimate.server.IntimateInterface;
 import com.intimate.utils.AnalyticsExceptionParser;
 import com.intimate.utils.Prefs;
+
+import retrofit.RestAdapter;
 
 /** Created by yurii_laguta on 21/07/13. */
 public class App extends Application {
 
+    private static RestAdapter restAdapter;
+    public static IntimateInterface sService;
+
     @Override
     public void onCreate() {
         super.onCreate();
-        //Init preferences
+        //Init Prefs class
         Prefs.getInstance();
         Prefs.init(this);
 
@@ -24,5 +30,10 @@ public class App extends Application {
             ExceptionReporter exceptionReporter = (ExceptionReporter) uncaughtExceptionHandler;
             exceptionReporter.setExceptionParser(new AnalyticsExceptionParser());
         }
+
+        restAdapter = new RestAdapter.Builder()
+                .setServer(IntimateInterface.URL)
+                .build();
+        sService = restAdapter.create(IntimateInterface.class);
     }
 }

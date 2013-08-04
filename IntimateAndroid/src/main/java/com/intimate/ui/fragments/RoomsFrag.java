@@ -2,6 +2,7 @@ package com.intimate.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +11,19 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.intimate.App;
 import com.intimate.R;
 import com.intimate.ui.MainActivity;
+import com.intimate.utils.Prefs;
+import com.intimate.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /** Created by yurii_laguta on 20/07/13. */
 public class RoomsFrag extends Fragment {
@@ -27,7 +35,8 @@ public class RoomsFrag extends Fragment {
     private AdapterView.OnItemClickListener mRoomListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            ((MainActivity)getActivity()).onRoomSelected(id);
+            //TODO get item id
+            ((MainActivity)getActivity()).onRoomSelected(mListView.getItemAtPosition(position).toString());
         }
     };
 
@@ -56,6 +65,32 @@ public class RoomsFrag extends Fragment {
         mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(mRoomListener);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        App.sService.getUserInfoWithRooms(Prefs.getLoginToken(), new Callback<Response>() {
+            @Override
+            public void success(Response response, Response response2) {
+                final JSONObject payload = Utils.getPayloadJson(response);
+                final String s = Utils.respToString(response);
+                if(payload != null){
+                    //TODO parse this Json into user with rooms
+                    Log.d(TAG, "Rooms " + Utils.getPayloadString(response));
+
+                } else {
+                    Utils.toastError(getActivity(), response);
+                    Utils.logError(TAG, response);
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                Utils.log(TAG, retrofitError);
+            }
+        });
     }
 
     class RoomsAdapter extends BaseAdapter {

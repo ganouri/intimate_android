@@ -2,22 +2,27 @@ package com.intimate.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.androidzeitgeist.mustache.fragment.CameraFragment;
 import com.androidzeitgeist.mustache.listener.CameraFragmentListener;
+import com.intimate.App;
+import com.intimate.Extra;
 import com.intimate.R;
 import com.intimate.ui.fragments.ContactsChooserFrag;
 import com.intimate.ui.view.TouchImageView;
+import com.intimate.utils.Prefs;
+import com.intimate.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -26,14 +31,19 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+import retrofit.mime.TypedFile;
+
 import static android.view.View.GONE;
 
-public class CameraActivity extends FragmentActivity implements CameraFragmentListener {
+public class CreateInteractionActivity extends FragmentActivity implements CameraFragmentListener {
 
-    private static final String TAG = CameraActivity.class.getSimpleName();
+    private static final String TAG = CreateInteractionActivity.class.getSimpleName();
     private static final int PICTURE_QUALITY = 90;
     private CameraFragment mCamFragment;
-    private ImageButton mBtnTakePhoto;
+    private Button mBtnTakePhoto;
     private Button mBtnTakeAnotherShoot;
     private Button mBtnSelectContact;
     private FrameLayout mFrameContainer;
@@ -42,18 +52,25 @@ public class CameraActivity extends FragmentActivity implements CameraFragmentLi
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (v.getId()){
+            switch (v.getId()) {
                 case R.id.btn_select_contact:
                     showSelectContact();
                     break;
 
                 case R.id.btn_take_another_shoot:
+                    mPhotoView.setImageDrawable(null);
+                    final boolean delete = mLastFile.delete();
+                    if (!delete) {
+                        Log.e(TAG, "haven't deleted file on having another shoot");
+                    }
                     showCameraFrag();
                     break;
             }
             v.setEnabled(false);
         }
     };
+    private File mLastFile;
+    private String mRoomId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +80,7 @@ public class CameraActivity extends FragmentActivity implements CameraFragmentLi
                 .add(R.id.fragment_container, new CameraFragment()).commit();
 
         mFrameContainer = (FrameLayout) findViewById(R.id.fragment_container);
-        mBtnTakePhoto =(ImageButton) findViewById(R.id.btn_take_photo);
+        mBtnTakePhoto = (Button) findViewById(R.id.btn_take_photo);
         mBtnSelectContact = (Button) findViewById(R.id.btn_select_contact);
         mBtnTakeAnotherShoot = (Button) findViewById(R.id.btn_take_another_shoot);
 
@@ -73,6 +90,8 @@ public class CameraActivity extends FragmentActivity implements CameraFragmentLi
         mPhotoView = new TouchImageView(this);
         mPhotoView.setVisibility(GONE);
         mFrameContainer.addView(mPhotoView);
+
+        mRoomId = getIntent() != null && getIntent().hasExtra(Extra.ROOM_ID) ? getIntent().getStringExtra(Extra.ROOM_ID) : null;
     }
 
 
@@ -123,7 +142,7 @@ public class CameraActivity extends FragmentActivity implements CameraFragmentLi
 
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         File mediaFile = new File(
-                mediaStorageDir.getPath() + File.separator + "KOKOON_"+ timeStamp + ".jpg"
+                mediaStorageDir.getPath() + File.separator + "KOKOON_" + timeStamp + ".jpg"
         );
 
         try {
@@ -144,6 +163,7 @@ public class CameraActivity extends FragmentActivity implements CameraFragmentLi
 //        );
 
         showPicture(mediaFile);
+        mLastFile = mediaFile;
         setOptionButtonsVisibility(true);
     }
 
@@ -154,7 +174,7 @@ public class CameraActivity extends FragmentActivity implements CameraFragmentLi
 
     }
 
-    private void showCameraFrag(){
+    private void showCameraFrag() {
         mPhotoView.setVisibility(GONE);
         mPhotoView.setImageDrawable(null);
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, new CameraFragment()).commit();
@@ -162,7 +182,7 @@ public class CameraActivity extends FragmentActivity implements CameraFragmentLi
         mBtnTakePhoto.setEnabled(true);
     }
 
-    private void showSelectContact(){
+    private void showSelectContact() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ContactsChooserFrag.newInstance(null)).commit();
         mPhotoView.setVisibility(GONE);
         mPhotoView.setImageDrawable(null);
@@ -171,7 +191,7 @@ public class CameraActivity extends FragmentActivity implements CameraFragmentLi
     }
 
     private void setOptionButtonsVisibility(final boolean show) {
-        int shortAnimTime = 3*getResources().getInteger(android.R.integer.config_shortAnimTime);
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         mBtnTakePhoto.setEnabled(true);
         mBtnTakePhoto.setVisibility(View.VISIBLE);
@@ -213,5 +233,79 @@ public class CameraActivity extends FragmentActivity implements CameraFragmentLi
     private void showSavingPictureErrorToast() {
         Toast.makeText(this, getText(R.string.toast_error_save_picture), Toast.LENGTH_SHORT).show();
     }
-    
+
+    //Called after we have a picture and selected a contact:
+    // first uploadResource
+    // second getRoomid if don't have from service
+    // third associate resource
+    public void onContactSelected(final String email) {
+        Log.d(TAG, "onContactSelected " + email);
+        App.sService.addResource(Prefs.getLoginToken(), Utils.getContentDisposition(mLastFile.getName(), mLastFile.getName()), "image/jpeg", "base64", new TypedFile("image/jpeg", mLastFile), new Callback<Response>() {
+            @Override
+            public void success(Response response, Response response2) {
+                Utils.log(response2);
+                // TODO: Check for error
+
+                final String resourceId = Utils.getPayloadString(response2);
+                if (!TextUtils.isEmpty(resourceId)) {
+
+                    //GET ROOM ID if don't have
+                    if (mRoomId != null) {
+                        App.sService.associateResource(Prefs.getLoginToken(), mRoomId, resourceId, associateResourceCallback);
+                    } else {
+                        App.sService.getRoomId(Prefs.getLoginToken(), Prefs.getEmail()+":k@m.com", new Callback<Response>() {
+                            @Override
+                            public void success(Response response, Response response2) {
+                                final String payload = Utils.getPayloadString(response);
+
+                                if(!"null".equals(payload)){
+                                    mRoomId = Utils.getPayloadString(response);
+                                    App.sService.associateResource(Prefs.getLoginToken(), mRoomId, resourceId, associateResourceCallback);
+                                } else {
+                                    Utils.toastError(CreateInteractionActivity.this, response);
+                                    Utils.logError(TAG, response);
+                                }
+                            }
+
+                            @Override
+                            public void failure(RetrofitError retrofitError) {
+                                Utils.log(TAG, retrofitError);
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError retrofitError) {
+                Utils.log(TAG, retrofitError);
+            }
+        });
+    }
+
+    final Callback<Response> associateResourceCallback = new Callback<Response>() {
+        @Override
+        public void success(Response response, Response response2) {
+            Utils.log(TAG, response);
+            final String payload = Utils.getPayloadString(response);
+            if (Utils.isValid(payload)) {
+                //TODO open this room with msg and state pending
+                Intent data = getIntent();
+                data.putExtra(Extra.ROOM_ID, mRoomId);
+                setResult(RESULT_OK, data);
+                Log.d(TAG, "call Finish()");
+                finish();
+                return;
+            } else {
+                Utils.toastError(CreateInteractionActivity.this, response2);
+                Utils.logError(TAG, response);
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            Utils.log(TAG, retrofitError);
+        }
+    };
+
 }

@@ -27,7 +27,7 @@ public class RoomFrag  extends Fragment {
 
     public static final String TAG = RoomFrag.class.getSimpleName();
     private JSONArray mData;
-    private long mRoomId;
+    private String mRoomId;
     private ListView mListView;
     private RoomAdapter mAdapter;
     private AdapterView.OnItemClickListener mListItemListiner = new AdapterView.OnItemClickListener() {
@@ -47,7 +47,7 @@ public class RoomFrag  extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mRoomId = getArguments().getLong(_ID);
+        mRoomId = getArguments().getString(_ID);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.intimate.ui.fragments;
 
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,14 +12,14 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.intimate.R;
+import com.intimate.ui.CreateInteractionActivity;
 import com.squareup.picasso.Picasso;
-
-import java.lang.String;
 
 /** Created by yurii_laguta on 20/07/13. */
 public class ContactsChooserFrag extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -56,6 +55,14 @@ public class ContactsChooserFrag extends Fragment implements LoaderManager.Loade
         super.onActivityCreated(savedInstanceState);
         mAdapter = new ContactsCursorAdapter(getActivity(), null, false);
         mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Cursor c = (Cursor) mListView.getItemAtPosition(position);
+                final String email = c.getString(3);
+                ((CreateInteractionActivity)getActivity()).onContactSelected(email);
+            }
+        });
         getLoaderManager().initLoader(R.id.loader_cursor, null, this);
     }
 
@@ -94,12 +101,12 @@ public class ContactsChooserFrag extends Fragment implements LoaderManager.Loade
     }
 
     private class ContactsCursorAdapter extends CursorAdapter {
-        public ContactsCursorAdapter(Context context, Cursor c, boolean autoRequery) {
+        public ContactsCursorAdapter(android.content.Context context, Cursor c, boolean autoRequery) {
             super(context, c, autoRequery);
         }
 
         @Override
-        public View newView(Context context, Cursor cursor, ViewGroup parent) {
+        public View newView(android.content.Context context, Cursor cursor, ViewGroup parent) {
             final View view = LayoutInflater.from(context).inflate(R.layout.list_item_contact, parent, false);
             ContactHolder holder = new ContactHolder();
             holder.profilePhoto = (ImageView) view.findViewById(R.id.iv_photo);
@@ -110,7 +117,7 @@ public class ContactsChooserFrag extends Fragment implements LoaderManager.Loade
         }
 
         @Override
-        public void bindView(View view, Context context, Cursor cursor) {
+        public void bindView(View view, android.content.Context context, Cursor cursor) {
             ContactHolder holder = (ContactHolder) view.getTag(R.id.holder);
             String photoURI = cursor.getString(2);
             holder.profilePhoto.setImageDrawable(null);

@@ -13,36 +13,44 @@
             android:layout_weight="1">
     </FrameLayout>
 
-    <LinearLayout
+    <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center">
-        <ImageButton
+
+        <Button
                 android:id="@+id/btn_take_photo"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
                 android:contentDescription="@string/content_description_take_picture"
                 android:onClick="takePicture"
-                android:src="@android:drawable/btn_default_small"/>
+                android:text="@string/shoot"
+                />
 
-        <Button
-                android:id="@+id/btn_select_contact"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:text="Select contact"
-                android:visibility="gone"/>
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <Button
-                android:id="@+id/btn_take_another_shoot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:text="Take another shoot"
-                android:visibility="gone"/>
+            <Button
+                    android:id="@+id/btn_select_contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:text="Select contact"
+                    android:visibility="gone"/>
+
+            <Button
+                    android:id="@+id/btn_take_another_shoot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="15dp"
+                    android:text="Take another shoot"
+                    android:visibility="gone"/>
+
+        </LinearLayout>
 
 
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>
