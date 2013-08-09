@@ -123,5 +123,8 @@
     <string name="action_test">Action Test</string>
     <string name="shoot">Shoot</string>
     <string name="login">Login</string>
+    <string name="prompt_nickname">Nickname</string>
+    <string name="create_account">Create account</string>
+    <string name="login_progress_verifying_login">Verifying login...</string>
 
 </resources>

@@ -42,7 +42,7 @@ public interface IntimateInterface {
 
     @FormUrlEncoded
     @POST("/login")
-    void login(@Field("auth_hash") String authHash, @Field("user") String email, Callback<Response> callback);
+    void login(@Field("authHash") String authHash, @Field("user") String email, Callback<Response> callback);
 
     /*
     it('user1 can get information about themselves', function(next) {
@@ -90,4 +90,7 @@ public interface IntimateInterface {
 //    });
     @GET("/secure/{token}/room/{room}/asc/{resourceId}")
     void associateResource(@Path("token") String token, @Path("room") String room, @Path("resourceId") String resourceId, Callback<Response> cb);
+
+    @POST("/secure/{token}/contacts")
+    void getContacts(@Path("token") String token, Callback<Response> cb);
 }

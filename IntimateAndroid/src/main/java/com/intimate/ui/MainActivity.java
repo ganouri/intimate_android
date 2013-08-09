@@ -84,7 +84,7 @@ public class MainActivity extends FragmentActivity {
             case R.id.action_logout:
                 Prefs.setLogged(false);
                 Prefs.setLoginToken("");
-                startActivity(new Intent(this, LoginActivity.class));
+                startActivity(new Intent(this, LaunchActivity.class));
                 finish();
                 return true;
         }
