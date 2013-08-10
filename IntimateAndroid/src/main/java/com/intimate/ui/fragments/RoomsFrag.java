@@ -78,6 +78,12 @@ public class RoomsFrag extends Fragment {
                 final String s = Utils.respToString(response);
                 if(payload != null){
                     //TODO parse this Json into user with rooms
+                    try {
+                        final JSONArray rooms = payload.getJSONArray("rooms");
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     Log.d(TAG, "Rooms " + Utils.getPayloadString(response));
 
                 } else {

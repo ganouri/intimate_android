@@ -96,7 +96,7 @@ public class SignUpFrag extends Fragment {
         mPasswordET.setError(null);
 
         // Store values at the time of the login attempt.
-        mNickname = mEmailET.getText().toString();
+        mNickname = mNicknameET.getText().toString();
         mEmail = mEmailET.getText().toString();
         mPassword = mPasswordET.getText().toString();
 

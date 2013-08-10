@@ -240,7 +240,7 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
     // third associate resource
     public void onContactSelected(final String email) {
         Log.d(TAG, "onContactSelected " + email);
-        App.sService.addResource(Prefs.getLoginToken(), Utils.getContentDisposition(mLastFile.getName(), mLastFile.getName()), "image/jpeg", "base64", new TypedFile("image/jpeg", mLastFile), new Callback<Response>() {
+        App.sService.addMedia(Prefs.getLoginToken(), Utils.getContentDisposition(mLastFile.getName(), mLastFile.getName()), "image/jpeg", "base64", new TypedFile("image/jpeg", mLastFile), new Callback<Response>() {
             @Override
             public void success(Response response, Response response2) {
                 Utils.log(response2);
@@ -253,12 +253,12 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
                     if (mRoomId != null) {
                         App.sService.associateResource(Prefs.getLoginToken(), mRoomId, resourceId, associateResourceCallback);
                     } else {
-                        App.sService.getRoomId(Prefs.getLoginToken(), Prefs.getEmail()+":k@m.com", new Callback<Response>() {
+                        App.sService.getRoomId(Prefs.getLoginToken(), Prefs.getEmail() + ":k@m.com", new Callback<Response>() {
                             @Override
                             public void success(Response response, Response response2) {
                                 final String payload = Utils.getPayloadString(response);
 
-                                if(!"null".equals(payload)){
+                                if (!"null".equals(payload)) {
                                     mRoomId = Utils.getPayloadString(response);
                                     App.sService.associateResource(Prefs.getLoginToken(), mRoomId, resourceId, associateResourceCallback);
                                 } else {
@@ -274,11 +274,13 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
                         });
                     }
                 }
+                finish();
             }
 
             @Override
             public void failure(RetrofitError retrofitError) {
                 Utils.log(TAG, retrofitError);
+
             }
         });
     }

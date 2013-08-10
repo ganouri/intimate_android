@@ -3,6 +3,7 @@ package com.intimate.utils;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.widget.Toast;
 
 import com.google.common.base.Charsets;
@@ -11,11 +12,13 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -66,6 +69,18 @@ public class Utils {
         try {
             JSONObject obj = new JSONObject(convertStreamToString(resp.getBody().in()));
             return obj.getJSONObject("payload");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static JSONArray getPayloadJsonArray(Response resp){
+        try {
+            JSONObject obj = new JSONObject(convertStreamToString(resp.getBody().in()));
+            return obj.getJSONArray("payload");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -154,5 +169,10 @@ public class Utils {
 
     public static boolean isValid(String payload) {
         return payload != null && !payload.equals("null");
+    }
+
+    public static boolean validEmail(String email) {
+        Pattern pattern = Patterns.EMAIL_ADDRESS;
+        return pattern.matcher(email).matches();
     }
 }

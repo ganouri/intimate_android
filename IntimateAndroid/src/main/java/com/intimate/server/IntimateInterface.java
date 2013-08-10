@@ -34,6 +34,7 @@ public interface IntimateInterface {
     final boolean USE_LOCAL = false;
     String LOCAL_URL = "http://"+ "192.168.89.79:8081";// "http://192.168.2.43:8081";
     String URL= USE_LOCAL ? LOCAL_URL :  "http://54.213.95.44:8080";
+    String TOKEN = "token";
 
     @FormUrlEncoded
     @POST("/signup")
@@ -55,10 +56,10 @@ public interface IntimateInterface {
      */
 
     @GET("/secure/{token}")
-    void getUserInfoWithRooms(@Path("token") String token, Callback<Response> cb);
+    void getUserInfoWithRooms(@Path(TOKEN) String token, Callback<Response> cb);
 
     @GET("/secure/{token}/roomid/{room}")
-    void getRoomId(@Path("token") String token, @Path("room") String room, Callback<Response> cb);
+    void getRoomId(@Path(TOKEN) String token, @Path("room") String room, Callback<Response> cb);
 
     /*
     var image = require('fs').readFileSync('tests/resources/flower.jpg');
@@ -77,10 +78,14 @@ public interface IntimateInterface {
      */
 
     @Multipart
+    @POST("/secure/{token}/media/")
+    void addMedia(@Path(TOKEN) String token, @Part("Content-Disposition") String contentDisposition,
+                  @Part("Content-Type") String contentType, @Part("Content-Transfer-Encoding") String contentTranEncoding,
+                  @Part("body") TypedFile filePhoto, Callback<Response> callback);
+
+    @FormUrlEncoded
     @POST("/secure/{token}/resource/")
-    void addResource(@Path("token") String token, @Part("Content-Disposition") String contentDisposition,
-                     @Part("Content-Type") String contentType, @Part("Content-Transfer-Encoding") String contentTranEncoding,
-                     @Part("body") TypedFile filePhoto, Callback<Response> callback);
+    void createResource(@Path(TOKEN) String  token, @Field("type") String type, @Field("mediaId") String mediaId, Callback<Response> cb);
 
 //    it('user1 can associate a resource id with a room ', function(next){
 //        var rep = request.get(url+"/secure/"+user1.token+"/room/"+user1.room+"/asc/"+user1.flowerpicId, function(err,res,body){
@@ -89,8 +94,11 @@ public interface IntimateInterface {
 //        });
 //    });
     @GET("/secure/{token}/room/{room}/asc/{resourceId}")
-    void associateResource(@Path("token") String token, @Path("room") String room, @Path("resourceId") String resourceId, Callback<Response> cb);
+    void associateResource(@Path(TOKEN) String token, @Path("room") String room, @Path("resourceId") String resourceId, Callback<Response> cb);
 
     @POST("/secure/{token}/contacts")
-    void getContacts(@Path("token") String token, Callback<Response> cb);
+    void getContacts(@Path(TOKEN) String token, Callback<Response> cb);
+
+    @GET("/secure/{token}/contact/invite/{email}")
+    void inviteUser(@Path(TOKEN) String token, @Path("email") String email, Callback<Response> cb);
 }

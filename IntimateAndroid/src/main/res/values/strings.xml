@@ -126,5 +126,6 @@
     <string name="prompt_nickname">Nickname</string>
     <string name="create_account">Create account</string>
     <string name="login_progress_verifying_login">Verifying login...</string>
+    <string name="intimates">Intimates</string>
 
 </resources>

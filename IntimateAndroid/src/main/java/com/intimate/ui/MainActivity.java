@@ -7,12 +7,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.intimate.App;
 import com.intimate.Extra;
 import com.intimate.R;
 import com.intimate.model.Interaction;
+import com.intimate.ui.fragments.ContactsFrag;
 import com.intimate.ui.fragments.InteractionImageFrag;
 import com.intimate.ui.fragments.RoomFrag;
 import com.intimate.ui.fragments.RoomsFrag;
@@ -33,6 +35,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        overridePendingTransition(0,0);
+        getWindow().requestFeature(Window.PROGRESS_INDETERMINATE_ON);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
@@ -87,9 +90,17 @@ public class MainActivity extends FragmentActivity {
                 startActivity(new Intent(this, LaunchActivity.class));
                 finish();
                 return true;
+
+            case R.id.action_contacts:
+                showContacts();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showContacts() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ContactsFrag.newInstance(null)).commit();
     }
 
     @Override
