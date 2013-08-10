@@ -14,6 +14,7 @@ import com.intimate.App;
 import com.intimate.Extra;
 import com.intimate.R;
 import com.intimate.model.Interaction;
+import com.intimate.model.Store;
 import com.intimate.ui.fragments.ContactsFrag;
 import com.intimate.ui.fragments.InteractionImageFrag;
 import com.intimate.ui.fragments.RoomFrag;
@@ -22,6 +23,8 @@ import com.intimate.utils.Prefs;
 import com.intimate.utils.RequestCode;
 import com.intimate.utils.Utils;
 
+import org.json.JSONArray;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -29,13 +32,29 @@ import retrofit.client.Response;
 public class MainActivity extends FragmentActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    private Callback<Response> mGetResCallback = new Callback<Response>() {
+        @Override
+        public void success(Response response, Response response2) {
+            Utils.log(TAG, response);
+            final JSONArray resp = Utils.getPayloadJsonArray(response);
+            if(resp != null) {
+                Store.getInstance().setResources(resp);
+            } else {
+                Utils.logError(TAG, response);
+            }
+        }
 
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            Utils.log(TAG, retrofitError);
+        }
+    };
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        overridePendingTransition(0,0);
-        getWindow().requestFeature(Window.PROGRESS_INDETERMINATE_ON);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
@@ -100,13 +119,15 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void showContacts() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ContactsFrag.newInstance(null)).commit();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, ContactsFrag.newInstance(null), ContactsFrag.TAG).commit();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         EasyTracker.getInstance().activityStart(this);
+        App.sService.getResources(App.getToken(), mGetResCallback);
     }
 
     @Override

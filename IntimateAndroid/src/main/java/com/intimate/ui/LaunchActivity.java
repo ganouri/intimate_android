@@ -49,6 +49,7 @@ public class LaunchActivity extends FragmentActivity implements AuthController {
         setContentView(R.layout.activity_login);
 
         if (Prefs.isLogged()) {
+            App.setToken(Prefs.getLoginToken());
             NavigationController.goToMainActivity(this);
             finish();
         }

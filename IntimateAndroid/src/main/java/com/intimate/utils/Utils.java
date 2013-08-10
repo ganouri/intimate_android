@@ -11,6 +11,8 @@ import com.google.common.base.Joiner;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
+import com.intimate.App;
+import com.intimate.server.IntimateInterface;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,6 +77,12 @@ public class Utils {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String getMediaURL(String roomId, String resId, String mediaId){
+       return IntimateInterface.BASE_URL
+               + String.format("/secure/%s/room/%s/resource/%s/media/%s",
+               App.getToken(), roomId, resId, mediaId);
     }
 
     public static JSONArray getPayloadJsonArray(Response resp){

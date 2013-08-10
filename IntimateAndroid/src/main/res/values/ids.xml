@@ -3,4 +3,5 @@
     <item name="CONTACT_PICKER_RESULT" type="id"/>
     <item name="holder" type="id"/>
     <item name="loader_cursor" type="id"/>
+    <item name="key" type="id"/>
 </resources>

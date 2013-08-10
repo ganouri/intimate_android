@@ -29,14 +29,13 @@ import retrofit.client.Response;
 public class RoomsFrag extends Fragment {
 
     public static final String TAG =  RoomsFrag.class.getSimpleName();
-    private JSONArray mDataSource;
     private ListView mListView;
     private RoomsAdapter mAdapter;
     private AdapterView.OnItemClickListener mRoomListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             //TODO get item id
-            ((MainActivity)getActivity()).onRoomSelected(mListView.getItemAtPosition(position).toString());
+            ((MainActivity)getActivity()).onRoomSelected((String) view.getTag(R.id.key));
         }
     };
 
@@ -49,20 +48,12 @@ public class RoomsFrag extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        try {
-            mDataSource = new JSONObject(getActivity().getString(R.string.data_source)).getJSONArray("result");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.frag_rooms, container, false);
         mListView = (ListView) view.findViewById(R.id.list);
-        mAdapter = new RoomsAdapter(mDataSource);
-        mListView.setAdapter(mAdapter);
         mListView.setOnItemClickListener(mRoomListener);
         return view;
     }
@@ -70,7 +61,7 @@ public class RoomsFrag extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        getActivity().setProgressBarIndeterminateVisibility(true);
         App.sService.getUserInfoWithRooms(Prefs.getLoginToken(), new Callback<Response>() {
             @Override
             public void success(Response response, Response response2) {
@@ -79,8 +70,9 @@ public class RoomsFrag extends Fragment {
                 if(payload != null){
                     //TODO parse this Json into user with rooms
                     try {
-                        final JSONArray rooms = payload.getJSONArray("rooms");
-
+                        final JSONObject rooms = payload.getJSONObject("rooms");
+                        mAdapter = new RoomsAdapter(rooms);
+                        mListView.setAdapter(mAdapter);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -90,31 +82,35 @@ public class RoomsFrag extends Fragment {
                     Utils.toastError(getActivity(), response);
                     Utils.logError(TAG, response);
                 }
+                getActivity().setProgressBarIndeterminateVisibility(false);
             }
 
             @Override
             public void failure(RetrofitError retrofitError) {
                 Utils.log(TAG, retrofitError);
+                getActivity().setProgressBarIndeterminateVisibility(false);
             }
         });
     }
 
     class RoomsAdapter extends BaseAdapter {
-        private JSONArray mData;
+        private JSONObject mData;
         private JSONObject mRoomObj;
-        public RoomsAdapter(JSONArray mDataSource) {
+        private JSONArray mKeys;
+        public RoomsAdapter(JSONObject mDataSource) {
             mData = mDataSource;
+            mKeys = mData.names();
         }
 
         @Override
         public int getCount() {
-            return mData.length();
+            return mKeys.length();
         }
 
         @Override
         public Object getItem(int position) {
             try {
-                return mData.get(position);
+                return mData.get(mKeys.getString(position));
             } catch (JSONException e) {
                 e.printStackTrace();
                 return null;
@@ -139,11 +135,15 @@ public class RoomsFrag extends Fragment {
             }
             mRoomObj = (JSONObject) getItem(position);
             try {
-                holder.roomNameTv.setText(mRoomObj.getString("company"));
+                holder.roomNameTv.setText(mRoomObj.getString("_id"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            try {
+                convertView.setTag(R.id.key, mKeys.getString(position));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return convertView;
         }
 

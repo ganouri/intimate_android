@@ -14,32 +14,25 @@ import retrofit.mime.TypedFile;
 /**
  * Created by yurii_laguta on 28/07/13.
  *
- * @GET("/group/{id}/users")
-List<User> groupList(@Path("id") int groupId);
-Query parameters can also be added.
-
- @GET("/group/{id}/users")
- List<User> groupList(@Path("id") int groupId, @Query("sort") String sort);
-
- @FormUrlEncoded
- @POST("/user/edit")
- User updateUser(@Field("first_name") String first, @Field("last_name") String last);
- Multipart requests are used when @Multipart is present on the method. Parts are declared using the @Part annotation.
-
- @Multipart
- @PUT("/user/photo")
- User updateUser(@Part("photo") TypedFile photo, @Part("description") TypedString description);
+ * @GET("/group/{id}/users") List<User> groupList(@Path("id") int groupId);
+ * Query parameters can also be added.
+ * @GET("/group/{id}/users") List<User> groupList(@Path("id") int groupId, @Query("sort") String sort);
+ * @FormUrlEncoded
+ * @POST("/user/edit") User updateUser(@Field("first_name") String first, @Field("last_name") String last);
+ * Multipart requests are used when @Multipart is present on the method. Parts are declared using the @Part annotation.
+ * @Multipart
+ * @PUT("/user/photo") User updateUser(@Part("photo") TypedFile photo, @Part("description") TypedString description);
  */
 public interface IntimateInterface {
     final boolean USE_LOCAL = false;
-    String LOCAL_URL = "http://"+ "192.168.89.79:8081";// "http://192.168.2.43:8081";
-    String URL= USE_LOCAL ? LOCAL_URL :  "http://54.213.95.44:8080";
+    String LOCAL_URL = "http://" + "192.168.89.79:8081";// "http://192.168.2.43:8081";
+    String BASE_URL = USE_LOCAL ? LOCAL_URL : "http://54.213.95.44:8080";
     String TOKEN = "token";
 
     @FormUrlEncoded
     @POST("/signup")
     void signup(@Field("nickname") String nickname, @Field("email") String email,
-                  @Field("password") String password, Callback<Response> callback);
+                @Field("password") String password, Callback<Response> callback);
 
     @FormUrlEncoded
     @POST("/login")
@@ -60,6 +53,10 @@ public interface IntimateInterface {
 
     @GET("/secure/{token}/roomid/{room}")
     void getRoomId(@Path(TOKEN) String token, @Path("room") String room, Callback<Response> cb);
+
+    @GET("/secure/{token}/room/{roomId}")
+    void getRoom(@Path(TOKEN) String token, @Path("roomId") String roomId, Callback<Response> cb);
+
 
     /*
     var image = require('fs').readFileSync('tests/resources/flower.jpg');
@@ -83,9 +80,12 @@ public interface IntimateInterface {
                   @Part("Content-Type") String contentType, @Part("Content-Transfer-Encoding") String contentTranEncoding,
                   @Part("body") TypedFile filePhoto, Callback<Response> callback);
 
+    @GET("/secure/{token}/room/{roomId}/resource/{resId}/media/{mediaId}")
+    void getMedia(@Path(TOKEN) String token, @Path("roomId") String roomId, @Path("resId") String resId, @Path("mediaId") String mediaId, Callback<Response> cb);
+
     @FormUrlEncoded
     @POST("/secure/{token}/resource/")
-    void createResource(@Path(TOKEN) String  token, @Field("type") String type, @Field("mediaId") String mediaId, Callback<Response> cb);
+    void createResource(@Path(TOKEN) String token, @Field("type") String type, @Field("mediaId") String mediaId, Callback<Response> cb);
 
 //    it('user1 can associate a resource id with a room ', function(next){
 //        var rep = request.get(url+"/secure/"+user1.token+"/room/"+user1.room+"/asc/"+user1.flowerpicId, function(err,res,body){
@@ -93,6 +93,10 @@ public interface IntimateInterface {
 //            next();
 //        });
 //    });
+
+    @POST("/secure/{token}/resources/")
+    void getResources(@Path(TOKEN) String token, Callback<Response> cb);
+
     @GET("/secure/{token}/room/{room}/asc/{resourceId}")
     void associateResource(@Path(TOKEN) String token, @Path("room") String room, @Path("resourceId") String resourceId, Callback<Response> cb);
 

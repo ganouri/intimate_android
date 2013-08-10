@@ -15,6 +15,15 @@ public class App extends Application {
 
     private static RestAdapter restAdapter;
     public static IntimateInterface sService;
+    private static String msToken;
+
+    public static String getToken() {
+        return msToken;
+    }
+
+    public static void setToken(String token) {
+        App.msToken = token;
+    }
 
     @Override
     public void onCreate() {
@@ -32,7 +41,7 @@ public class App extends Application {
         }
 
         restAdapter = new RestAdapter.Builder()
-                .setServer(IntimateInterface.URL)
+                .setServer(IntimateInterface.BASE_URL)
                 .build();
         sService = restAdapter.create(IntimateInterface.class);
     }

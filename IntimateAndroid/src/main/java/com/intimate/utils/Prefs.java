@@ -3,6 +3,8 @@ package com.intimate.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.intimate.App;
+
 /** Created by yurii_laguta on 21/07/13. */
 public class Prefs {
 
@@ -39,6 +41,7 @@ public class Prefs {
     }
 
     public static void setLoginToken(String value) {
+        App.setToken(value);
         mEditor.putString("loginToken", value).apply();
     }
 
