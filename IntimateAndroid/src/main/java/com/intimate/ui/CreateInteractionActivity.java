@@ -7,11 +7,11 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.androidzeitgeist.mustache.fragment.CameraFragment;
@@ -19,11 +19,16 @@ import com.androidzeitgeist.mustache.listener.CameraFragmentListener;
 import com.intimate.App;
 import com.intimate.Extra;
 import com.intimate.R;
+import com.intimate.model.KoResource;
+import com.intimate.server.IntimateInterface;
 import com.intimate.ui.fragments.ContactsChooserFrag;
+import com.intimate.ui.fragments.ContactsFrag;
 import com.intimate.ui.view.TouchImageView;
 import com.intimate.utils.Prefs;
 import com.intimate.utils.Utils;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -47,6 +52,7 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
     private Button mBtnTakeAnotherShoot;
     private Button mBtnSelectContact;
     private FrameLayout mFrameContainer;
+    private LinearLayout mBtnsContainer;
     private TouchImageView mPhotoView;
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -54,7 +60,8 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.btn_select_contact:
-                    showSelectContact();
+                    showLocalContacts();
+//                    showSelectContact();
                     break;
 
                 case R.id.btn_take_another_shoot:
@@ -69,6 +76,52 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
             v.setEnabled(false);
         }
     };
+    private String mSelectedContact;
+    private Callback<Response> createResourceCallback = new Callback<Response>() {
+        @Override
+        public void success(Response response, Response response2) {
+            final JSONObject resource = Utils.getPayloadJson(response);
+            final String resourceId = resource.optString("_id");
+            if(mRoomId != null){
+                App.sService.associateResource(App.getToken(), mRoomId, resourceId, mAssociateResourceCallback);
+            } else {
+                App.sService.getRoomId(Prefs.getLoginToken(), Prefs.getEmail() + IntimateInterface.DIVIDER + mSelectedContact, new Callback<Response>() {
+                    @Override
+                    public void success(Response response, Response response2) {
+                        final String roomId = Utils.getPayloadString(response);
+
+                        if (!"null".equals(roomId)) {
+                            mRoomId = roomId;
+                            App.sService.associateResource(Prefs.getLoginToken(), mRoomId, resourceId, mAssociateResourceCallback);
+                        } else {
+                            Utils.toastError(CreateInteractionActivity.this, response);
+                            Utils.logError(TAG, response);
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError retrofitError) {
+                        Utils.log(TAG, retrofitError);
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            Utils.log(TAG, retrofitError);
+            Utils.showToast(CreateInteractionActivity.this, retrofitError.getLocalizedMessage());
+        }
+    };
+
+
+    private void showLocalContacts() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ContactsFrag.newInstance(null)).commit();
+        mPhotoView.setVisibility(GONE);
+//        mPhotoView.setImageDrawable(null);
+        mBtnsContainer.setVisibility(GONE);
+    }
+
     private File mLastFile;
     private String mRoomId;
 
@@ -80,6 +133,7 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
                 .add(R.id.fragment_container, new CameraFragment()).commit();
 
         mFrameContainer = (FrameLayout) findViewById(R.id.fragment_container);
+        mBtnsContainer = (LinearLayout) findViewById(R.id.container_btns_after_shoot);
         mBtnTakePhoto = (Button) findViewById(R.id.btn_take_photo);
         mBtnSelectContact = (Button) findViewById(R.id.btn_select_contact);
         mBtnTakeAnotherShoot = (Button) findViewById(R.id.btn_take_another_shoot);
@@ -155,13 +209,6 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
             return;
         }
 
-//        MediaScannerConnection.scanFile(
-//                this,
-//                new String[]{mediaFile.toString()},
-//                new String[]{"image/jpeg"},
-//                null
-//        );
-
         showPicture(mediaFile);
         mLastFile = mediaFile;
         setOptionButtonsVisibility(true);
@@ -186,8 +233,7 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, ContactsChooserFrag.newInstance(null)).commit();
         mPhotoView.setVisibility(GONE);
         mPhotoView.setImageDrawable(null);
-        mBtnSelectContact.setVisibility(GONE);
-        mBtnTakeAnotherShoot.setVisibility(GONE);
+        mBtnsContainer.setVisibility(GONE);
     }
 
     private void setOptionButtonsVisibility(final boolean show) {
@@ -205,27 +251,15 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
                     }
                 });
 
-        mBtnSelectContact.setEnabled(true);
-        mBtnSelectContact.setVisibility(View.VISIBLE);
-        mBtnSelectContact.animate()
+        mBtnsContainer.setEnabled(true);
+        mBtnsContainer.setVisibility(View.VISIBLE);
+        mBtnsContainer.animate()
                 .setDuration(shortAnimTime)
                 .alpha(show ? 1 : 0)
                 .setListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
-                        mBtnSelectContact.setVisibility(show ? View.VISIBLE : GONE);
-                    }
-                });
-
-        mBtnTakeAnotherShoot.setEnabled(true);
-        mBtnTakeAnotherShoot.setVisibility(View.VISIBLE);
-        mBtnTakeAnotherShoot.animate()
-                .setDuration(shortAnimTime)
-                .alpha(show ? 1 : 0)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mBtnTakeAnotherShoot.setVisibility(show ? View.VISIBLE : GONE);
+                        mBtnsContainer.setVisibility(show ? View.VISIBLE : GONE);
                     }
                 });
     }
@@ -240,41 +274,19 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
     // third associate resource
     public void onContactSelected(final String email) {
         Log.d(TAG, "onContactSelected " + email);
+        mSelectedContact = email;
         App.sService.addMedia(Prefs.getLoginToken(), Utils.getContentDisposition(mLastFile.getName(), mLastFile.getName()), "image/jpeg", "base64", new TypedFile("image/jpeg", mLastFile), new Callback<Response>() {
             @Override
             public void success(Response response, Response response2) {
                 Utils.log(response2);
                 // TODO: Check for error
 
-                final String resourceId = Utils.getPayloadString(response2);
-                if (!TextUtils.isEmpty(resourceId)) {
-
-                    //GET ROOM ID if don't have
-                    if (mRoomId != null) {
-                        App.sService.associateResource(Prefs.getLoginToken(), mRoomId, resourceId, associateResourceCallback);
-                    } else {
-                        App.sService.getRoomId(Prefs.getLoginToken(), Prefs.getEmail() + ":k@m.com", new Callback<Response>() {
-                            @Override
-                            public void success(Response response, Response response2) {
-                                final String payload = Utils.getPayloadString(response);
-
-                                if (!"null".equals(payload)) {
-                                    mRoomId = Utils.getPayloadString(response);
-                                    App.sService.associateResource(Prefs.getLoginToken(), mRoomId, resourceId, associateResourceCallback);
-                                } else {
-                                    Utils.toastError(CreateInteractionActivity.this, response);
-                                    Utils.logError(TAG, response);
-                                }
-                            }
-
-                            @Override
-                            public void failure(RetrofitError retrofitError) {
-                                Utils.log(TAG, retrofitError);
-                            }
-                        });
-                    }
+                final String mediaId = Utils.getPayloadString(response2);
+                if (!Utils.isEmpty(mediaId)) {
+                    App.sService.createResource(App.getToken(), KoResource.TYPE_IMAGE, mediaId, createResourceCallback);
+                } else {
+                    Utils.toastError(CreateInteractionActivity.this, response);
                 }
-                finish();
             }
 
             @Override
@@ -285,7 +297,7 @@ public class CreateInteractionActivity extends FragmentActivity implements Camer
         });
     }
 
-    final Callback<Response> associateResourceCallback = new Callback<Response>() {
+    final Callback<Response> mAssociateResourceCallback = new Callback<Response>() {
         @Override
         public void success(Response response, Response response2) {
             Utils.log(TAG, response);

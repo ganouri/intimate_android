@@ -158,7 +158,10 @@ public class Utils {
     }
 
     public static void toastError(Context ctx, Response response) {
-        showToast(ctx, "ERROR: " +getErrorString(response));
+        if(ctx != null){
+            showToast(ctx, "ERROR: " +getErrorString(response));
+            logError("TOASTED", response);
+        }
     }
 
     public static void logError(String tag, Response response) {

@@ -28,6 +28,7 @@ public interface IntimateInterface {
     String LOCAL_URL = "http://" + "192.168.89.79:8081";// "http://192.168.2.43:8081";
     String BASE_URL = USE_LOCAL ? LOCAL_URL : "http://54.213.95.44:8080";
     String TOKEN = "token";
+    String DIVIDER = ":";
 
     @FormUrlEncoded
     @POST("/signup")
@@ -56,6 +57,9 @@ public interface IntimateInterface {
 
     @GET("/secure/{token}/room/{roomId}")
     void getRoom(@Path(TOKEN) String token, @Path("roomId") String roomId, Callback<Response> cb);
+
+    @POST("/secure/{token}/rooms/")
+    void getRooms(@Path(TOKEN) String token, Callback<Response> cb);
 
 
     /*

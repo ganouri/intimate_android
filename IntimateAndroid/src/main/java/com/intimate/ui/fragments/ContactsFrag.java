@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,10 +16,12 @@ import android.widget.TextView;
 
 import com.intimate.App;
 import com.intimate.R;
+import com.intimate.ui.CreateInteractionActivity;
+import com.intimate.ui.MainActivity;
 import com.intimate.utils.Prefs;
+import com.intimate.utils.Utils;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import retrofit.Callback;
@@ -59,6 +62,17 @@ public class ContactsFrag extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.frag_contacts, container, false);
         mListView = (ListView) view.findViewById(R.id.list);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final JSONObject itemAtPosition = (JSONObject) parent.getItemAtPosition(position);
+                if(getActivity() instanceof CreateInteractionActivity){
+                    ((CreateInteractionActivity) getActivity()).onContactSelected(itemAtPosition.optString("email"));
+                } else if (getActivity() instanceof MainActivity){
+                    Utils.showToast(getActivity(), "Show contact detail page");
+                }
+            }
+        });
         mEmailET = (EditText) view.findViewById(R.id.et_email);
         mBtnAddContact = (Button) view.findViewById(R.id.btn_add_contact);
         mBtnAddContact.setOnClickListener(new View.OnClickListener() {
@@ -149,18 +163,12 @@ public class ContactsFrag extends Fragment {
 
         @Override
         public int getCount() {
-            return mData.length();
+            return mKeys.length();
         }
 
         @Override
         public Object getItem(int position) {
-            try {
-                return mKeys.get(position);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e(TAG, "Malformed JSON");
-                return null;
-            }
+            return mData.opt(mKeys.optString(position));
         }
 
         @Override
@@ -170,18 +178,14 @@ public class ContactsFrag extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            try {
-                mItem = (JSONObject) mData.get(mKeys.getString(position));
+            mItem = (JSONObject) getItem(position);
 
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_contact, parent, false);
-                }
-
-                ((TextView) convertView.findViewById(R.id.tv_display_name)).setText(mItem.getString("nickname"));
-                ((TextView) convertView.findViewById(R.id.tv_email_address)).setText(mItem.getString("email"));
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if (convertView == null) {
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_contact, parent, false);
             }
+
+            ((TextView) convertView.findViewById(R.id.tv_display_name)).setText(mItem.optString("nickname"));
+            ((TextView) convertView.findViewById(R.id.tv_email_address)).setText(mItem.optString("email"));
             return convertView;
         }
     }

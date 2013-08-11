@@ -29,24 +29,28 @@
                 />
 
         <LinearLayout
+                android:id="@+id/container_btns_after_shoot"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
             <Button
                     android:id="@+id/btn_select_contact"
+                    android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="15dp"
                     android:text="Select contact"
-                    android:visibility="gone"/>
+                    />
 
             <Button
                     android:id="@+id/btn_take_another_shoot"
+                    android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="15dp"
                     android:text="Take another shoot"
-                    android:visibility="gone"/>
+                    />
 
         </LinearLayout>
 

@@ -25,17 +25,19 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-/** Created by yurii_laguta on 20/07/13. */
+/**
+ * Created by yurii_laguta on 20/07/13.
+ */
 public class RoomsFrag extends Fragment {
 
-    public static final String TAG =  RoomsFrag.class.getSimpleName();
+    public static final String TAG = RoomsFrag.class.getSimpleName();
     private ListView mListView;
     private RoomsAdapter mAdapter;
     private AdapterView.OnItemClickListener mRoomListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             //TODO get item id
-            ((MainActivity)getActivity()).onRoomSelected((String) view.getTag(R.id.key));
+            ((MainActivity) getActivity()).onRoomSelected((String) view.getTag(R.id.key));
         }
     };
 
@@ -59,15 +61,20 @@ public class RoomsFrag extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setProgressVisibility(true);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        getActivity().setProgressBarIndeterminateVisibility(true);
         App.sService.getUserInfoWithRooms(Prefs.getLoginToken(), new Callback<Response>() {
             @Override
             public void success(Response response, Response response2) {
                 final JSONObject payload = Utils.getPayloadJson(response);
                 final String s = Utils.respToString(response);
-                if(payload != null){
+                if (payload != null) {
                     //TODO parse this Json into user with rooms
                     try {
                         final JSONObject rooms = payload.getJSONObject("rooms");
@@ -82,21 +89,27 @@ public class RoomsFrag extends Fragment {
                     Utils.toastError(getActivity(), response);
                     Utils.logError(TAG, response);
                 }
-                getActivity().setProgressBarIndeterminateVisibility(false);
+                setProgressVisibility(false);
             }
 
             @Override
             public void failure(RetrofitError retrofitError) {
                 Utils.log(TAG, retrofitError);
-                getActivity().setProgressBarIndeterminateVisibility(false);
+                setProgressVisibility(false);
             }
         });
+    }
+
+    private void setProgressVisibility(boolean visible) {
+        if (isResumed())
+            getActivity().setProgressBarIndeterminateVisibility(visible);
     }
 
     class RoomsAdapter extends BaseAdapter {
         private JSONObject mData;
         private JSONObject mRoomObj;
         private JSONArray mKeys;
+
         public RoomsAdapter(JSONObject mDataSource) {
             mData = mDataSource;
             mKeys = mData.names();
@@ -104,7 +117,7 @@ public class RoomsFrag extends Fragment {
 
         @Override
         public int getCount() {
-            return mKeys.length();
+            return mKeys != null ? mKeys.length() : 0;
         }
 
         @Override
@@ -125,7 +138,7 @@ public class RoomsFrag extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             RoomHolder holder;
-            if(convertView == null){
+            if (convertView == null) {
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_room, parent, false);
                 holder = new RoomHolder();
                 holder.roomNameTv = (TextView) convertView.findViewById(R.id.tv_room_name);

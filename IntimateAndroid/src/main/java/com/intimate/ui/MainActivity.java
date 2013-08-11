@@ -24,6 +24,7 @@ import com.intimate.utils.RequestCode;
 import com.intimate.utils.Utils;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -37,8 +38,26 @@ public class MainActivity extends FragmentActivity {
         public void success(Response response, Response response2) {
             Utils.log(TAG, response);
             final JSONArray resp = Utils.getPayloadJsonArray(response);
-            if(resp != null) {
+            if (resp != null) {
                 Store.getInstance().setResources(resp);
+            } else {
+                Utils.logError(TAG, response);
+            }
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            Utils.log(TAG, retrofitError);
+        }
+    };
+
+    private Callback<Response> mGetContactsCallback = new Callback<Response>() {
+        @Override
+        public void success(Response response, Response response2) {
+            Utils.log(TAG, response);
+            final JSONObject resp = Utils.getPayloadJson(response);
+            if (resp != null) {
+                Store.getInstance().setContacts(resp);
             } else {
                 Utils.logError(TAG, response);
             }
@@ -63,7 +82,6 @@ public class MainActivity extends FragmentActivity {
         }
 
 
-
         showRooms();
         findViewById(R.id.btn_create_interaction).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,20 +102,20 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_test:
-            App.sService.getRoomId(Prefs.getLoginToken(), "tyurii.laguta@gmail.com:yurii.laguta@gmail.com", new Callback<Response>() {
-                @Override
-                public void success(Response response, Response response2) {
-                    final String room = Utils.getPayloadString(response2);
-                    Log.d(TAG, "Success: room" + room);
-                }
+                App.sService.getRoomId(Prefs.getLoginToken(), "tyurii.laguta@gmail.com:yurii.laguta@gmail.com", new Callback<Response>() {
+                    @Override
+                    public void success(Response response, Response response2) {
+                        final String room = Utils.getPayloadString(response2);
+                        Log.d(TAG, "Success: room" + room);
+                    }
 
-                @Override
-                public void failure(RetrofitError retrofitError) {
-                    Log.e(TAG, retrofitError.getMessage());
-                }
-            });
+                    @Override
+                    public void failure(RetrofitError retrofitError) {
+                        Log.e(TAG, retrofitError.getMessage());
+                    }
+                });
                 return true;
             case R.id.action_settings:
                 startActivity(new Intent(this, SettingsActivity.class));
@@ -119,8 +137,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void showContacts() {
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, ContactsFrag.newInstance(null), ContactsFrag.TAG).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                ContactsFrag.newInstance(null)).addToBackStack(ContactsFrag.TAG).commit();
     }
 
     @Override
@@ -128,6 +146,7 @@ public class MainActivity extends FragmentActivity {
         super.onStart();
         EasyTracker.getInstance().activityStart(this);
         App.sService.getResources(App.getToken(), mGetResCallback);
+        App.sService.getContacts(App.getToken(), mGetContactsCallback);
     }
 
     @Override
@@ -163,10 +182,10 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == RequestCode.CREATE_INTERACTION){
-            switch (resultCode){
+        if (requestCode == RequestCode.CREATE_INTERACTION) {
+            switch (resultCode) {
                 case RESULT_OK:
-                    if(data != null){
+                    if (data != null) {
                         final String roomId = data.getStringExtra(Extra.ROOM_ID);
                         onRoomSelected(roomId);
                     }

@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.ExceptionReporter;
+import com.google.gson.Gson;
 import com.intimate.server.IntimateInterface;
 import com.intimate.utils.AnalyticsExceptionParser;
 import com.intimate.utils.Prefs;
@@ -16,6 +17,7 @@ public class App extends Application {
     private static RestAdapter restAdapter;
     public static IntimateInterface sService;
     private static String msToken;
+    public static Gson sGson;
 
     public static String getToken() {
         return msToken;

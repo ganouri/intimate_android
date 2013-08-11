@@ -13,6 +13,7 @@ import java.util.HashMap;
  */
 public class Store {
     private static Store ourInstance = new Store();
+    private JSONObject contacts;
 
     public static Store getInstance() {
         return ourInstance;
@@ -47,4 +48,15 @@ public class Store {
         return mResourcesMap.get(id);
     }
 
+    public void setContacts(JSONObject contacts) {
+        this.contacts = contacts;
+    }
+
+    public JSONObject getContacts() {
+        return contacts;
+    }
+
+    public JSONObject getContact(String id){
+        return contacts.optJSONObject(id);
+    }
 }

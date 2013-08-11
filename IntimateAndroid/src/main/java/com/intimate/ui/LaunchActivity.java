@@ -190,6 +190,8 @@ public class LaunchActivity extends FragmentActivity implements AuthController {
             @Override
             public void failure(RetrofitError retrofitError) {
                 log(retrofitError.getLocalizedMessage());
+                Utils.showToast(LaunchActivity.this, retrofitError.getLocalizedMessage());
+                showProgress(false);
             }
         });
     }

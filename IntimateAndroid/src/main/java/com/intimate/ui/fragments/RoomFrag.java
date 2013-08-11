@@ -79,7 +79,7 @@ public class RoomFrag extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getActivity().setProgressBarIndeterminateVisibility(true);
+        setProgressVisibility(true);
         App.sService.getRoom(Prefs.getLoginToken(), mArgs.getString("_id"), getRoomCallback);
     }
 
@@ -102,15 +102,21 @@ public class RoomFrag extends Fragment {
             } else {
                 logError(TAG, response);
             }
-            getActivity().setProgressBarIndeterminateVisibility(false);
+            setProgressVisibility(false);
         }
 
         @Override
         public void failure(RetrofitError retrofitError) {
             log(TAG, retrofitError);
-            getActivity().setProgressBarIndeterminateVisibility(false);
+            setProgressVisibility(false);
         }
     };
+
+    private void setProgressVisibility(boolean visible) {
+        if(isResumed()){
+            getActivity().setProgressBarIndeterminateVisibility(visible);
+        }
+    }
 
     private class RoomAdapter extends BaseAdapter {
         private static final String TYPE_IMAGE = "image";
@@ -127,7 +133,7 @@ public class RoomFrag extends Fragment {
 
         @Override
         public int getCount() {
-            return mKeys.length();
+            return mKeys != null ? mKeys.length() : 0;
         }
 
         @Override
@@ -162,33 +168,33 @@ public class RoomFrag extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-                mMsgObj = (JSONObject) getItem(position);
-                final String resId = mMsgObj.optString("resourceId");
-                mResObj = Store.getInstance().getResource(resId);
-                final String type = mResObj.optString("type");
-                MsgHolder holder;
-                if (convertView == null) {
-                    convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_msg, parent, false);
-                    holder = new MsgHolder();
-                    holder.msgBodyTV = (TextView) convertView.findViewById(R.id.tv_msg_body);
-                    holder.profilePhotoIV = (ImageView) convertView.findViewById(R.id.iv_profile_photo);
-                    convertView.setTag(R.id.holder, holder);
-                } else {
-                    holder = (MsgHolder) convertView.getTag(R.id.holder);
-                }
+            mMsgObj = (JSONObject) getItem(position);
+            final String resId = mMsgObj.optString("resourceId");
+            mResObj = Store.getInstance().getResource(resId);
+            final String type = mResObj.optString("type");
+            MsgHolder holder;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_msg, parent, false);
+                holder = new MsgHolder();
+                holder.msgBodyTV = (TextView) convertView.findViewById(R.id.tv_msg_body);
+                holder.profilePhotoIV = (ImageView) convertView.findViewById(R.id.iv_profile_photo);
+                convertView.setTag(R.id.holder, holder);
+            } else {
+                holder = (MsgHolder) convertView.getTag(R.id.holder);
+            }
 
-                if(TYPE_IMAGE.equals(type)){
-                    final String mediaId = mResObj.optString("mediaId");
-                    final String mediaURL = Utils.getMediaURL(mRoomId, resId, mediaId);
-                    Log.d(TAG, "MEDIA_URL" + mediaURL);
-                    Picasso.with(getActivity()).load(mediaURL).into(holder.profilePhotoIV);
-                    holder.profilePhotoIV.setImageDrawable(null);
+            if (TYPE_IMAGE.equals(type)) {
+                final String mediaId = mResObj.optString("mediaId");
+                final String mediaURL = Utils.getMediaURL(mRoomId, resId, mediaId);
+                Log.d(TAG, "MEDIA_URL" + mediaURL);
+                Picasso.with(getActivity()).load(mediaURL).into(holder.profilePhotoIV);
+                holder.profilePhotoIV.setImageDrawable(null);
 
-                } else if (TYPE_TEXT.equals(type)){
-                    holder.msgBodyTV.setText(mResObj.optString("message"));
-                    holder.profilePhotoIV.setImageDrawable(null);
+            } else if (TYPE_TEXT.equals(type)) {
+                holder.msgBodyTV.setText(mResObj.optString("message"));
+                holder.profilePhotoIV.setImageDrawable(null);
 
-                }
+            }
 //                Picasso.with(getActivity()).load(mMsgObj.optString("picture")).into(holder.profilePhotoIV);
 
             return convertView;

@@ -26,6 +26,7 @@ public class ContactsChooserFrag extends Fragment implements LoaderManager.Loade
     public static final String TAG = ContactsChooserFrag.class.getSimpleName();
     private ListView mListView;
     private ContactsCursorAdapter mAdapter;
+    private View mEmptyTV;
 
     public static ContactsChooserFrag newInstance(Bundle args) {
         ContactsChooserFrag f = new ContactsChooserFrag();
@@ -46,7 +47,8 @@ public class ContactsChooserFrag extends Fragment implements LoaderManager.Loade
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.frag_contacts_chooser, container, false);
         mListView = (ListView) root.findViewById(R.id.list);
-        mListView.setEmptyView(root.findViewById(R.id.tv_empty));
+        mEmptyTV = root.findViewById(R.id.tv_empty);
+        mListView.setEmptyView(root.findViewById(R.id.progressBar));
         return root;
     }
 
@@ -93,6 +95,7 @@ public class ContactsChooserFrag extends Fragment implements LoaderManager.Loade
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         mAdapter.swapCursor(data);
+        mListView.setEmptyView(mEmptyTV);
     }
 
     @Override
