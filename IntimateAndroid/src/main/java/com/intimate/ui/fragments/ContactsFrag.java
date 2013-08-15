@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.intimate.App;
 import com.intimate.R;
+import com.intimate.model.Store;
 import com.intimate.ui.CreateInteractionActivity;
 import com.intimate.ui.MainActivity;
 import com.intimate.utils.Prefs;
@@ -94,7 +95,7 @@ public class ContactsFrag extends Fragment {
                 } else {
                     v.setEnabled(false);
                     getActivity().setProgressBarIndeterminateVisibility(true);
-                    App.sService.inviteUser(Prefs.getLoginToken(), email, addContactCB);
+                    App.sService.addContact(App.getToken(), email, mAddContactCB);
                 }
             }
         });
@@ -103,10 +104,13 @@ public class ContactsFrag extends Fragment {
         return view;
     }
 
+//    App.sService.inviteUser(Prefs.getLoginToken(), email, mAddContactCB);
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        App.sService.getContacts(Prefs.getLoginToken(), getContactsCB);
+//        App.sService.getContacts(Prefs.getLoginToken(), getContactsCB);
+        mAdapter = new ContactsAdapter(Store.getInstance().getContacts());
+        mListView.setAdapter(mAdapter);
     }
 
     private final Callback<Response> getContactsCB = new Callback<Response>() {
@@ -125,7 +129,7 @@ public class ContactsFrag extends Fragment {
         }
     };
 
-    private final Callback<Response> addContactCB = new Callback<Response>() {
+    private Callback<Response> mInviteContactCB = new Callback<Response>() {
         @Override
         public void success(Response response, Response response2) {
             final String resp = getPayloadString(response);
@@ -150,6 +154,33 @@ public class ContactsFrag extends Fragment {
         }
     };
 
+    private Callback<Response> mAddContactCB = new Callback<Response>() {
+        @Override
+        public void success(Response response, Response response2) {
+            Log.d(TAG, "Resp: " + Utils.respToString(response));
+            final String resp = getPayloadString(response);
+            Log.d(TAG, "RESP: " + resp);
+            if (isEmpty(resp) == false) {
+                App.sService.getContacts(Prefs.getLoginToken(), getContactsCB);
+                mEmailET.setText("");
+                mBtnAddContact.setEnabled(true);
+            } else {
+                logError(TAG, response);
+                mEmailET.setError(getErrorString(response));
+                mEmailET.requestFocus();
+                mBtnAddContact.setEnabled(true);
+            }
+            getActivity().setProgressBarIndeterminateVisibility(false);
+        }
+
+        @Override
+        public void failure(RetrofitError retrofitError) {
+            log(TAG, retrofitError);
+            getActivity().setProgressBarIndeterminateVisibility(false);
+            mBtnAddContact.setEnabled(true);
+        }
+    };
+
     class ContactsAdapter extends BaseAdapter {
 
         private final JSONObject mData;
@@ -163,7 +194,7 @@ public class ContactsFrag extends Fragment {
 
         @Override
         public int getCount() {
-            return mKeys.length();
+            return mKeys != null ? mKeys.length() : 0;
         }
 
         @Override

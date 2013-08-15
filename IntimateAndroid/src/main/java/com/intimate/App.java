@@ -18,6 +18,7 @@ public class App extends Application {
     public static IntimateInterface sService;
     private static String msToken;
     public static Gson sGson;
+    private static String id;
 
     public static String getToken() {
         return msToken;
@@ -25,6 +26,14 @@ public class App extends Application {
 
     public static void setToken(String token) {
         App.msToken = token;
+    }
+
+    public static void setId(String id) {
+        App.id = id;
+    }
+
+    public static String getId() {
+        return id;
     }
 
     @Override

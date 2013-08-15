@@ -11,6 +11,7 @@ import android.view.Window;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.intimate.App;
+import com.intimate.BusProvider;
 import com.intimate.Extra;
 import com.intimate.R;
 import com.intimate.model.Interaction;
@@ -22,9 +23,7 @@ import com.intimate.ui.fragments.RoomsFrag;
 import com.intimate.utils.Prefs;
 import com.intimate.utils.RequestCode;
 import com.intimate.utils.Utils;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.squareup.otto.Subscribe;
 
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -33,56 +32,19 @@ import retrofit.client.Response;
 public class MainActivity extends FragmentActivity {
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    private Callback<Response> mGetResCallback = new Callback<Response>() {
-        @Override
-        public void success(Response response, Response response2) {
-            Utils.log(TAG, response);
-            final JSONArray resp = Utils.getPayloadJsonArray(response);
-            if (resp != null) {
-                Store.getInstance().setResources(resp);
-            } else {
-                Utils.logError(TAG, response);
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            Utils.log(TAG, retrofitError);
-        }
-    };
-
-    private Callback<Response> mGetContactsCallback = new Callback<Response>() {
-        @Override
-        public void success(Response response, Response response2) {
-            Utils.log(TAG, response);
-            final JSONObject resp = Utils.getPayloadJson(response);
-            if (resp != null) {
-                Store.getInstance().setContacts(resp);
-            } else {
-                Utils.logError(TAG, response);
-            }
-        }
-
-        @Override
-        public void failure(RetrofitError retrofitError) {
-            Utils.log(TAG, retrofitError);
-        }
-    };
-
+    private boolean mInited;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        overridePendingTransition(0,0);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
+        setProgressBarIndeterminateVisibility(true);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
 //            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, PassCheckFrag.newInstance()).commit();
 //            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, ContactsChooserFrag.newInstance(null)).commit();
         }
-
-
-        showRooms();
         findViewById(R.id.btn_create_interaction).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,8 +52,28 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        Store.getInstance().startSyncTask();
     }
 
+    @Override public void onResume() {
+        super.onResume();
+        BusProvider.getInstance().register(this);
+    }
+
+    @Subscribe public void cacheUpdated(Store store){
+        Log.d(TAG, "cacheUpdated " + store.toString());
+        if(store != null){
+            if(!mInited){
+                showRooms();
+                mInited = true;
+            }
+        }
+    }
+
+    @Override public void onPause() {
+        super.onPause();
+        BusProvider.getInstance().unregister(this);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -145,8 +127,6 @@ public class MainActivity extends FragmentActivity {
     protected void onStart() {
         super.onStart();
         EasyTracker.getInstance().activityStart(this);
-        App.sService.getResources(App.getToken(), mGetResCallback);
-        App.sService.getContacts(App.getToken(), mGetContactsCallback);
     }
 
     @Override
@@ -158,6 +138,7 @@ public class MainActivity extends FragmentActivity {
     public void showRooms() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                 RoomsFrag.newInstance(null)).addToBackStack(RoomsFrag.TAG).commit();
+        setProgressBarIndeterminateVisibility(false);
     }
 
     public void onRoomSelected(String id) {

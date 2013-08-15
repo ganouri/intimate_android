@@ -12,6 +12,7 @@ import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import com.intimate.App;
+import com.intimate.model.Store;
 import com.intimate.server.IntimateInterface;
 
 import org.json.JSONArray;
@@ -185,5 +186,21 @@ public class Utils {
     public static boolean validEmail(String email) {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
         return pattern.matcher(email).matches();
+    }
+
+    public static String getRoomName(JSONArray members) {
+        final StringBuilder sb = new StringBuilder();
+        JSONObject member;
+        // -1 exclude himself from room name
+        for(int i = 0; i < members.length() - 1; i++){
+            final String memberId = members.optString(i);
+            if(memberId.equals(App.getId()))
+                continue;
+            member = Store.getInstance().getContact(memberId);
+            sb.append(member.optString("email"));
+            if(i!= member.length()-2)
+                sb.append(" ");
+        }
+        return sb.toString();
     }
 }

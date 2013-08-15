@@ -61,6 +61,9 @@ public interface IntimateInterface {
     @POST("/secure/{token}/rooms/")
     void getRooms(@Path(TOKEN) String token, Callback<Response> cb);
 
+    @POST("/secure/{token}/rooms/")
+    Response getRooms(@Path(TOKEN) String token);
+
 
     /*
     var image = require('fs').readFileSync('tests/resources/flower.jpg');
@@ -101,12 +104,21 @@ public interface IntimateInterface {
     @POST("/secure/{token}/resources/")
     void getResources(@Path(TOKEN) String token, Callback<Response> cb);
 
+    @POST("/secure/{token}/resources/")
+    Response getResources(@Path(TOKEN) String token);
+
     @GET("/secure/{token}/room/{room}/asc/{resourceId}")
     void associateResource(@Path(TOKEN) String token, @Path("room") String room, @Path("resourceId") String resourceId, Callback<Response> cb);
 
     @POST("/secure/{token}/contacts")
     void getContacts(@Path(TOKEN) String token, Callback<Response> cb);
 
+    @POST("/secure/{token}/contacts")
+    Response getContacts(@Path(TOKEN) String token);
+
     @GET("/secure/{token}/contact/invite/{email}")
     void inviteUser(@Path(TOKEN) String token, @Path("email") String email, Callback<Response> cb);
+
+    @GET("/secure/{token}/contact/add/{email}")
+    void addContact(@Path(TOKEN) String token, @Path("email") String email, Callback<Response> cb);
 }

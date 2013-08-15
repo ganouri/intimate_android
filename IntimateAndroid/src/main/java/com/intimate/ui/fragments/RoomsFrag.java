@@ -2,7 +2,6 @@ package com.intimate.ui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,19 +10,13 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.intimate.App;
 import com.intimate.R;
+import com.intimate.model.Store;
 import com.intimate.ui.MainActivity;
-import com.intimate.utils.Prefs;
 import com.intimate.utils.Utils;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Created by yurii_laguta on 20/07/13.
@@ -57,47 +50,52 @@ public class RoomsFrag extends Fragment {
         final View view = inflater.inflate(R.layout.frag_rooms, container, false);
         mListView = (ListView) view.findViewById(R.id.list);
         mListView.setOnItemClickListener(mRoomListener);
+        mListView.setEmptyView(view.findViewById(R.id.tv_empty));
         return view;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setProgressVisibility(true);
+        mAdapter = new RoomsAdapter(Store.getInstance().getRooms());
+        mListView.setAdapter(mAdapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        App.sService.getUserInfoWithRooms(Prefs.getLoginToken(), new Callback<Response>() {
-            @Override
-            public void success(Response response, Response response2) {
-                final JSONObject payload = Utils.getPayloadJson(response);
-                final String s = Utils.respToString(response);
-                if (payload != null) {
-                    //TODO parse this Json into user with rooms
-                    try {
-                        final JSONObject rooms = payload.getJSONObject("rooms");
-                        mAdapter = new RoomsAdapter(rooms);
-                        mListView.setAdapter(mAdapter);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Log.d(TAG, "Rooms " + Utils.getPayloadString(response));
-
-                } else {
-                    Utils.toastError(getActivity(), response);
-                    Utils.logError(TAG, response);
-                }
-                setProgressVisibility(false);
-            }
-
-            @Override
-            public void failure(RetrofitError retrofitError) {
-                Utils.log(TAG, retrofitError);
-                setProgressVisibility(false);
-            }
-        });
+//        App.sService.getUserInfoWithRooms(Prefs.getLoginToken(), new Callback<Response>() {
+//            @Override
+//            public void success(Response response, Response response2) {
+//                final JSONObject payload = Utils.getPayloadJson(response);
+//                final String s = Utils.respToString(response);
+//                if (payload != null) {
+//                    //TODO parse this Json into user with rooms
+//                    try {
+//                        final JSONObject rooms = payload.getJSONObject("rooms");
+//                        mAdapter = new RoomsAdapter(rooms);
+//                        mListView.setAdapter(mAdapter);
+//
+//                        //get my id for future reference
+//                        App.setId(payload.optString("_id"));
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Log.d(TAG, "Rooms " + Utils.getPayloadString(response));
+//
+//                } else {
+//                    Utils.toastError(getActivity(), response);
+//                    Utils.logError(TAG, response);
+//                }
+//                setProgressVisibility(false);
+//            }
+//
+//            @Override
+//            public void failure(RetrofitError retrofitError) {
+//                Utils.log(TAG, retrofitError);
+//                setProgressVisibility(false);
+//            }
+//        });
     }
 
     private void setProgressVisibility(boolean visible) {
@@ -106,28 +104,31 @@ public class RoomsFrag extends Fragment {
     }
 
     class RoomsAdapter extends BaseAdapter {
-        private JSONObject mData;
+        private JSONArray mData;
         private JSONObject mRoomObj;
-        private JSONArray mKeys;
+//        private JSONArray mKeys;
 
-        public RoomsAdapter(JSONObject mDataSource) {
+        public RoomsAdapter(JSONArray mDataSource) {
             mData = mDataSource;
-            mKeys = mData.names();
+//            mKeys = mData.names();
         }
 
         @Override
         public int getCount() {
-            return mKeys != null ? mKeys.length() : 0;
+            final int count = mData.length();
+            return count;
+//            return mKeys != null ? mKeys.length() : 0;
         }
 
         @Override
         public Object getItem(int position) {
-            try {
-                return mData.get(mKeys.getString(position));
-            } catch (JSONException e) {
-                e.printStackTrace();
-                return null;
-            }
+            return mData.optJSONObject(position);
+//            try {
+//                return mData.get(mKeys.getString(position));
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//                return null;
+//            }
         }
 
         @Override
@@ -147,16 +148,14 @@ public class RoomsFrag extends Fragment {
                 holder = (RoomHolder) convertView.getTag(R.id.holder);
             }
             mRoomObj = (JSONObject) getItem(position);
-            try {
-                holder.roomNameTv.setText(mRoomObj.getString("_id"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            try {
-                convertView.setTag(R.id.key, mKeys.getString(position));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            final String id = mRoomObj.optString("_id");
+            final JSONObject room = Store.getInstance().getRoom(id);
+            final JSONArray members = room.optJSONArray("members");
+            final String roomName = Utils.getRoomName(members);
+
+            holder.roomNameTv.setText(roomName);
+//                convertView.setTag(R.id.key, mKeys.getString(position));
+            convertView.setTag(R.id.key, id);
             return convertView;
         }
 

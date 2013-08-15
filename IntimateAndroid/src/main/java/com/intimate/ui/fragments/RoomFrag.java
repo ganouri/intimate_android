@@ -141,6 +141,7 @@ public class RoomFrag extends Fragment {
             try {
                 return mSource.get(mKeys.getString(position));
             } catch (JSONException e) {
+                Log.e(TAG, e.getLocalizedMessage());
                 e.printStackTrace();
                 return null;
             }
@@ -150,6 +151,8 @@ public class RoomFrag extends Fragment {
         public long getItemId(int position) {
             return position;
         }
+
+
 
         //        "corr":
 //            {"1375948416023":
